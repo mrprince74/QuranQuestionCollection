@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأسئلة القرآنية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+*{
+    font-family: 'Cairo', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+
+body {
+    direction: rtl; /* Right-to-left alignment */
+    background-image: url('islamic-pattern.jpeg');
+}
+#from,#to {
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+
+
+
+.lantern {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ffbe2e;
+    font-size: 32px;
+}
+
+.left {
+    left: 10px;
+}
+
+.right {
+    right: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #154360;
+    margin-top: 30px;
+}
+
+form {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    color: #154360;
+    margin-bottom: 5px;
+}
+
+select, input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+
+button[type="submit"] {
+    background-color: #154360;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+
+    </style>
+
+
+</head>
+<body>
+    <div class="lantern left"><i class="fas fa-lantern"></i></div>
+    <div class="lantern right"><i class="fas fa-lantern"></i></div>
+    <h1>الأسئلة القرآنية</h1>
+    <form action="#" method="post" onsubmit="return validateForm()">
+        <div>
+            <label for="surah">اسم السورة:</label>
+            <select id="surah" name="surah">
+                <option value="" selected disabled>اختر السورة</option>
+
+                {% for label, value in surah_options %}
+                    <option value="{{ value }}" data-ayah-number="{{ ayah_numbers[value] }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="question">السؤال:</label>
+            <input type="text" id="question" name="question" size="30">
+        </div>
+        <div>
+            <label for="answer">الجواب:</label>
+            <input type="text" id="answer" name="answer" size="30">
+        </div>
+        <label for="from-to">رقم الآية التي تتواجد بها الاجابة:</label>
+        <div id="from-to" class="form-group">
+            <div>
+                <label for="from">من:</label>
+                <select id="from" name="from">
+                    <option value="" selected disabled>اختر الرقم</option>
+
+                    <!-- Options will be added dynamically by JavaScript -->
+                </select>
+            </div>
+            <div>
+                <label for="to">إلى:</label>
+                <select id="to" name="to">
+                    <option value="" selected disabled>اختر الرقم</option>
+
+                    <!-- Options will be added dynamically by JavaScript -->
+                </select>
+            </div>
+        </div>
+        <div>
+            <button type="submit"><i class="fas fa-check-circle"></i> تقديم</button>
+        </div>
+    </form>
+
+    <script>
+        // Get references to select boxes
+        var surahSelect = document.getElementById('surah');
+        var fromSelect = document.getElementById('from');
+        var toSelect = document.getElementById('to');
+
+        // Add event listener to surah select box
+        surahSelect.addEventListener('change', function() {
+            var ayahNumber = parseInt(this.options[this.selectedIndex].getAttribute('data-ayah-number'));
+
+            // Clear previous options
+            fromSelect.innerHTML = '';
+            toSelect.innerHTML = '';
+
+            // Add options to "From" and "To" select boxes
+            for (var i = 1; i <= ayahNumber; i++) {
+                var option = new Option(i, i);
+                fromSelect.add(option);
+                toSelect.add(option.cloneNode(true));
+            }
+        });
+
+        // Trigger change event to initialize options based on the initial Surah selection
+        surahSelect.dispatchEvent(new Event('change'));
+    </script>
+    <script>
+        // Get references to select boxes
+        var surahSelect = document.getElementById('surah');
+        var fromSelect = document.getElementById('from');
+        var toSelect = document.getElementById('to');
+    
+        // Function to update options of the "To" select box based on the selected Surah and "From" value
+        function updateToOptions() {
+            var ayahNumber = parseInt(surahSelect.options[surahSelect.selectedIndex].getAttribute('data-ayah-number'));
+            var fromValue = parseInt(fromSelect.value);
+    
+            // Clear previous options
+            toSelect.innerHTML = '';
+    
+            // Add options to "To" select box
+            for (var i = fromValue; i <= ayahNumber; i++) {
+                var option = new Option(i, i);
+                toSelect.add(option);
+            }
+    
+            // Check if the current "To" value is less than the current "From" value
+            if (parseInt(toSelect.value) < fromValue) {
+                // If so, set the "To" value to match the "From" value
+                toSelect.value = fromValue;
+            }
+        }
+    
+        // Function to update "To" options when "From" value changes
+        function updateToOptionsFromChange() {
+            var fromValue = parseInt(fromSelect.value);
+            var toValue = parseInt(toSelect.value);
+    
+            // Clear previous options
+            toSelect.innerHTML = '';
+    
+            // Get the number of Ayahs for the selected Surah
+            var ayahNumber = parseInt(surahSelect.options[surahSelect.selectedIndex].getAttribute('data-ayah-number'));
+    
+            // Add options to "To" select box
+            for (var i = fromValue; i <= ayahNumber; i++) {
+                var option = new Option(i, i);
+                toSelect.add(option);
+            }
+    
+            // If the current "To" value is less than the new "From" value, update it to match the new "From" value
+            if (toValue < fromValue) {
+                toSelect.value = fromValue;
+            }
+        }
+    
+        // Add event listeners
+        surahSelect.addEventListener('change', updateToOptions);
+        fromSelect.addEventListener('change', updateToOptionsFromChange);
+    
+        // Trigger change event to initialize options based on the initial Surah and "From" selection
+        surahSelect.dispatchEvent(new Event('change'));
+        function validateForm() {
+            var surahValue = surahSelect.value;
+            var questionValue = document.getElementById('question').value;
+            var answerValue = document.getElementById('answer').value;
+            var fromValue = fromSelect.value;
+            var toValue = toSelect.value;
+            console.log(surahValue)
+            console.log(questionValue)
+            console.log(answerValue)
+            console.log(fromValue)
+            console.log(toValue)
+            // Check if any field is empty
+            if (!surahValue || !questionValue || !answerValue || !fromValue || !toValue) {
+                alert('يرجى ملء جميع الحقول');
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
+    
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأسئلة القرآنية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="lantern left"><i class="fas fa-lantern"></i></div>
+    <div class="lantern right"><i class="fas fa-lantern"></i></div>
+    <h1>الأسئلة القرآنية</h1>
+    <form action="#" method="post">
+        <div>
+            <label for="surah">اسم السورة:</label>
+            <select id="surah" name="surah">
+                {% for value, label in surah_options %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="question">السؤال:</label>
+            <input type="text" id="question" name="question" size="30">
+        </div>
+        <div>
+            <label for="answer">الجواب:</label>
+            <input type="text" id="answer" name="answer" size="30">
+        </div>
+        <label for="from-to">رقم الآية التي تتواجد بها الاجابة:</label>
+        <div id="from-to" class="form-group">
+            <div>
+                <label for="from">من:</label>
+                <select id="from" name="from">
+                    {% for value, label in ayah_options %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="to">إلى:</label>
+                <select id="to" name="to">
+                    {% for value, label in ayah_options %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div>
+            <button type="submit"><i class="fas fa-check-circle"></i> تقديم</button>
+        </div>
+    </form>
+</body>
+</html>
